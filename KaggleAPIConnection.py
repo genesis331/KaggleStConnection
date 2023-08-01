@@ -44,8 +44,13 @@ class KaggleAPIConnection(ExperimentalBaseConnection[KaggleApi]):
             owner_slug, dataset_slug, dataset_version_number = cursor.split_dataset_string(query)
             # Get the dataset files
             ref_files = cursor.datasets_list_files(owner_slug, dataset_slug)['datasetFiles']
-            # Download the first file
-            output = cursor.datasets_download_file(owner_slug, dataset_slug, ref_files[0]['nameNullable'],
+            # Check if "file" is one of the arguments
+            file_index = 0
+            if 'file' in kwargs:
+                # Get the index of the file and set 0 if it doesn't exist
+                file_index = ref_files.index(next((x for x in ref_files if x['nameNullable'] == kwargs.pop('file')), 0))
+            # Download the file
+            output = cursor.datasets_download_file(owner_slug, dataset_slug, ref_files[file_index]['nameNullable'],
                                                    _preload_content=False, async_req=True, **kwargs)
             # Return the result as a Pandas DataFrame
             if output.get().info()['Content-Type'] == 'text/csv':
@@ -55,11 +60,11 @@ class KaggleAPIConnection(ExperimentalBaseConnection[KaggleApi]):
                 if not os.path.exists("temp/"):
                     os.makedirs("temp/")
                 # Rename the file to .zip
-                with open("temp/" + ref_files[0]['nameNullable'][:-4] + ".zip", 'wb') as f:
+                with open("temp/" + ref_files[file_index]['nameNullable'][:-4] + ".zip", 'wb') as f:
                     f.write(output.get().read())
                 # Unzip the file
-                with ZipFile("temp/" + ref_files[0]['nameNullable'][:-4] + ".zip", 'r') as zipObj:
+                with ZipFile("temp/" + ref_files[file_index]['nameNullable'][:-4] + ".zip", 'r') as zipObj:
                     zipObj.extractall("temp/")
-                return pd.read_csv("temp/" + ref_files[0]['nameNullable'][:-4] + ".csv")
+                return pd.read_csv("temp/" + ref_files[file_index]['nameNullable'][:-4] + ".csv")
             raise Exception("File type not supported")
         return _query(query, **kwargs)
