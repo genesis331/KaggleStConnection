@@ -51,6 +51,9 @@ class KaggleAPIConnection(ExperimentalBaseConnection[KaggleApi]):
             if output.get().info()['Content-Type'] == 'text/csv':
                 return pd.read_csv(StringIO(output.get().read().decode('utf-8')))
             if output.get().info()['Content-Type'] == 'application/zip':
+                # Check if temp folder exists and create it if it doesn't
+                if not os.path.exists("temp/"):
+                    os.makedirs("temp/")
                 # Rename the file to .zip
                 with open("temp/" + ref_files[0]['nameNullable'][:-4] + ".zip", 'wb') as f:
                     f.write(output.get().read())
