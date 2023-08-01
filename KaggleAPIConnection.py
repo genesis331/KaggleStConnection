@@ -1,6 +1,7 @@
 from streamlit.connections import ExperimentalBaseConnection
 from streamlit.runtime.caching import cache_data
 import os
+from zipfile import ZipFile
 from io import StringIO
 import pandas as pd
 os.environ['KAGGLE_USERNAME'] = ""
@@ -32,12 +33,12 @@ class KaggleAPIConnection(ExperimentalBaseConnection[KaggleApi]):
         """Returns a cursor object."""
         return self._instance
 
-    def query(self, query: str, ttl: int = 3600, **kwargs) -> any:
+    def query(self, query: str, ttl: int = 3600, **kwargs) -> pd.DataFrame:
         """Executes a query and returns the result."""
         # Cache the result
         @cache_data(ttl=ttl)
         # Query the Kaggle Public API
-        def _query(query: str, **kwargs) -> any:
+        def _query(query: str, **kwargs) -> pd.DataFrame:
             cursor = self.cursor()
             # Split the query into owner_slug, dataset_slug, dataset_version_number
             owner_slug, dataset_slug, dataset_version_number = cursor.split_dataset_string(query)
@@ -45,10 +46,17 @@ class KaggleAPIConnection(ExperimentalBaseConnection[KaggleApi]):
             ref_files = cursor.datasets_list_files(owner_slug, dataset_slug)['datasetFiles']
             # Download the first file
             output = cursor.datasets_download_file(owner_slug, dataset_slug, ref_files[0]['nameNullable'],
-                                                   _preload_content=False, **kwargs)
-            # Return the result as a Pandas DataFrame if the file is a CSV file
-            if output.info()['Content-Type'] == 'text/csv':
-                return pd.read_csv(StringIO(output.read().decode('utf-8')))
-            # Raise an exception if the file is not a CSV file
-            raise Exception('Not a CSV file')
+                                                   _preload_content=False, async_req=True, **kwargs)
+            # Return the result as a Pandas DataFrame
+            if output.get().info()['Content-Type'] == 'text/csv':
+                return pd.read_csv(StringIO(output.get().read().decode('utf-8')))
+            if output.get().info()['Content-Type'] == 'application/zip':
+                # Rename the file to .zip
+                with open("temp/" + ref_files[0]['nameNullable'][:-4] + ".zip", 'wb') as f:
+                    f.write(output.get().read())
+                # Unzip the file
+                with ZipFile("temp/" + ref_files[0]['nameNullable'][:-4] + ".zip", 'r') as zipObj:
+                    zipObj.extractall("temp/")
+                return pd.read_csv("temp/" + ref_files[0]['nameNullable'][:-4] + ".csv")
+            raise Exception("File type not supported")
         return _query(query, **kwargs)
