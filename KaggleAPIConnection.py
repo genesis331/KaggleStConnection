@@ -48,7 +48,8 @@ class KaggleAPIConnection(ExperimentalBaseConnection[KaggleApi]):
             file_index = 0
             if 'file' in kwargs:
                 # Get the index of the file and set 0 if it doesn't exist
-                file_index = ref_files.index(next((x for x in ref_files if x['nameNullable'] == kwargs.pop('file')), 0))
+                file_name = kwargs.pop('file')
+                file_index = ref_files.index(next((x for x in ref_files if x['nameNullable'] == file_name), 0))
             # Download the file
             output = cursor.datasets_download_file(owner_slug, dataset_slug, ref_files[file_index]['nameNullable'],
                                                    _preload_content=False, async_req=True, **kwargs)
