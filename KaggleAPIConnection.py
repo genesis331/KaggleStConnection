@@ -35,6 +35,9 @@ class KaggleAPIConnection(ExperimentalBaseConnection[KaggleApi]):
 
     def query(self, query: str, ttl: int = 3600, **kwargs) -> pd.DataFrame:
         """Executes a query and returns the result."""
+        # Tell streamlit to not hash this parameter
+        if 'file' in kwargs:
+            kwargs['_file'] = kwargs.pop('file')
         # Cache the result
         @cache_data(ttl=ttl)
         # Query the Kaggle Public API
@@ -46,10 +49,12 @@ class KaggleAPIConnection(ExperimentalBaseConnection[KaggleApi]):
             ref_files = cursor.datasets_list_files(owner_slug, dataset_slug)['datasetFiles']
             # Check if "file" is one of the arguments
             file_index = 0
-            if 'file' in kwargs:
+            if '_file' in kwargs:
                 # Get the index of the file and set 0 if it doesn't exist
-                file_name = kwargs.pop('file')
-                file_index = ref_files.index(next((x for x in ref_files if x['nameNullable'] == file_name), 0))
+                file_name = kwargs.pop('_file')
+                for x in ref_files:
+                    if x['nameNullable'] == file_name:
+                        file_index = ref_files.index(x)
             # Download the file
             output = cursor.datasets_download_file(owner_slug, dataset_slug, ref_files[file_index]['nameNullable'],
                                                    _preload_content=False, async_req=True, **kwargs)
