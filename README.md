@@ -14,7 +14,7 @@ You may access the app at [this link](https://kagglestconnection.streamlit.app/)
 To install **KaggleStConnection** in your local machine, install the package with the code below in the terminal and you are ready to go.
 
 ```sh
-pip install git+https://github.com/genesis331/KaggleStConnection.git@v1.2.2
+pip install git+https://github.com/genesis331/KaggleStConnection.git@v1.3.0
 ```
 
 ### Initializing KaggleStConnection
@@ -27,7 +27,7 @@ from KaggleAPIConnection import KaggleAPIConnection
 import streamlit as st
 
 # Initialize connection
-conn = st.experimental_connection("kaggle", type=KaggleAPIConnection)
+conn = st.connection("kaggle", type=KaggleAPIConnection)
 
 # Obtain connection object
 cursor = conn.cursor()
@@ -70,7 +70,7 @@ To use your API keys in Streamlit, you can either:
   Replace the `<USERNAME>` and the `<API_KEY>` with that in your `kaggle.json` file.
 * **[NOT RECOMMENDED FOR PUBLIC DEPLOYMENT]** Specify the `kaggle_username` and `kaggle_key` optional parameter during the initialization of the connection with `st.experimental_connection`. An example of this use case is shown below:
   ```py
-  conn = st.experimental_connection(
+  conn = st.connection(
       'kaggle', 
       type=KaggleAPIConnection,
       kaggle_username='<USERNAME>',
