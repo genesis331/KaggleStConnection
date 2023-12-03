@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='kaggle-st-connection',
-    version='1.2.2',
+    version='1.3.0',
     py_modules=['KaggleAPIConnection'],
     install_requires=['kaggle', 'streamlit', 'pandas'],
     author='Cheah Zixu',
