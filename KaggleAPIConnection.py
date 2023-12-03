@@ -1,4 +1,4 @@
-from streamlit.connections import ExperimentalBaseConnection
+from streamlit.connections import BaseConnection
 from streamlit.runtime.caching import cache_data
 import os
 from zipfile import ZipFile
@@ -9,8 +9,8 @@ os.environ['KAGGLE_KEY'] = ""
 from kaggle.api.kaggle_api_extended import KaggleApi
 
 
-class KaggleAPIConnection(ExperimentalBaseConnection[KaggleApi]):
-    """st.experimental_connection implementation for Kaggle Public API"""
+class KaggleAPIConnection(BaseConnection[KaggleApi]):
+    """st.connection implementation for Kaggle Public API"""
 
     def _connect(self, **kwargs) -> KaggleApi:
         """Connects to the Kaggle Public API and returns a cursor object."""
