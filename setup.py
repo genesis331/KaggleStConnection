@@ -6,11 +6,11 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='kaggle-st-connection',
-    version='1.3.1',
+    version='1.3.2',
     py_modules=['KaggleAPIConnection'],
     install_requires=['kaggle', 'streamlit', 'pandas'],
     author='Cheah Zixu',
-    description='st.experimental_connection implementation for Kaggle Public API',
+    description='st.connection implementation for Kaggle Public API',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/genesis331/KaggleStConnection',
