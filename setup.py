@@ -6,7 +6,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='kaggle-st-connection',
-    version='1.3.2',
+    version='1.3.3',
     py_modules=['KaggleAPIConnection'],
     install_requires=['kaggle', 'streamlit', 'pandas'],
     author='Cheah Zixu',
