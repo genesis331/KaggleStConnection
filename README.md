@@ -9,6 +9,9 @@ You can view the source GitHub repository for the connection class and the demo 
 
 You may access the app at [this link](https://kagglestconnection.streamlit.app/).
 
+<img width="1440" alt="Screenshot 2023-12-08 at 11 26 05 AM" src="https://github.com/genesis331/KaggleStConnection/assets/22348410/3a0edf86-b80e-4d8d-923e-03e5fcc80f13">
+
+
 ### Package Installation
 
 To install **KaggleStConnection** in your local machine, install the package with the code below in the terminal and you are ready to go.
