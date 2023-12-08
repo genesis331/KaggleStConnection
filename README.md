@@ -71,7 +71,7 @@ To use your API keys in Streamlit, you can either:
   kaggle_key='<API_KEY>'
   ```
   Replace the `<USERNAME>` and the `<API_KEY>` with that in your `kaggle.json` file.
-* **[NOT RECOMMENDED FOR PUBLIC DEPLOYMENT]** Specify the `kaggle_username` and `kaggle_key` optional parameter during the initialization of the connection with `st.experimental_connection`. An example of this use case is shown below:
+* **[NOT RECOMMENDED FOR PUBLIC DEPLOYMENT]** Specify the `kaggle_username` and `kaggle_key` optional parameter during the initialization of the connection with `st.connection`. An example of this use case is shown below:
   ```py
   conn = st.connection(
       'kaggle', 
